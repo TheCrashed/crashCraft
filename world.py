@@ -2,9 +2,12 @@ import numpy
 import zlib
 
 
-class World():
-	def __init__(self, chunk_width=16, chunk_length=16):
-		self.chunks = [[Chunk(x, z) for x in xrange(chunk_width)] for z in xrange(chunk_length)]
+class MinecraftWorld():
+	def __init__(self, chunk_width=4, chunk_length=4):
+		self.width = chunk_width * 2 + 1
+		self.length = chunk_length * 2 + 1
+
+		self.chunks = [[Chunk(x, z) for z in xrange(-chunk_length, chunk_length + 1)] for x in xrange(-chunk_width, chunk_width + 1)]
 
 
 class Chunk():
@@ -22,6 +25,8 @@ class Chunk():
 		self.block_light[:] = 0xFF
 		self.skylights[:] = 0xFF
 
+		self.build_data()
+
 	def get_data(self):
 		if self.dirty:
 			self.build_data()
@@ -29,10 +34,10 @@ class Chunk():
 		return self.data
 
 	def build_data(self):
-		self.data = self.blocks.reshape((16, 16, 256)).tostring() + 
-					self.block_metadata.reshape((16, 16, 128)).tostring() + 
-					self.block_light.reshape((16, 16, 128)).tostring() + 
+		self.data = self.blocks.reshape((16, 16, 256)).tostring() + \
+					self.block_metadata.reshape((16, 16, 128)).tostring() + \
+					self.block_light.reshape((16, 16, 128)).tostring() + \
 					self.skylights.reshape((16, 16, 128)).tostring()
 
-		self.data = zlib.compress(data)
+		self.data = zlib.compress(self.data)
 		self.dirty = False

@@ -229,7 +229,6 @@ class ProxyPlayer():
 		self.broadcast(packet, all=True)
 
 	def on_dig(self, packet):
-		'''
 		self.protocol.write_packet(packets.BlockChange({
 			'X': packet['X'],
 			'Y': packet['Y'],
@@ -237,8 +236,6 @@ class ProxyPlayer():
 			'Type': 0x02,
 			'Metadata': 0
 		}))
-		'''
-		self.send_chunks()
 
 	def on_player(self, packet):
 		def degree_to_byte(degree, fix=0):
@@ -249,47 +246,6 @@ class ProxyPlayer():
 				degree += 360
 
 			return int((degree * 256.0 / 360.0))
-
-		'''
-		if packet.id == 0x0A:
-			return
-			self.broadcast(packets.Entity({
-				'EID': self.id
-			}))
-
-		elif packet.id == 0x0B:
-			self.x, self.y, self.z = packet['X'], packet['Y'], packet['Z']
-
-			self.broadcast(packets.EntityTeleport({
-				'EID': self.id,
-				'X': packet['X'] * 32,
-				'Y': packet['Y'] * 32,
-				'Z': packet['Z'] * 32,
-				'Yaw': degree_to_byte(self.yaw),
-				'Pitch': degree_to_byte(-self.pitch)
-			}))
-
-		elif packet.id == 0x0C:
-			self.yaw, self.pitch = packet['Yaw'], packet['Pitch']
-
-			self.broadcast(packets.EntityLook({
-				'EID': self.id,
-				'Yaw': degree_to_byte(packet['Yaw']),
-				'Pitch': degree_to_byte(-packet['Pitch'])
-			}))
-
-		elif packet.id == 0x0D:
-			self.x, self.y, self.z, self.yaw, self.pitch = packet['X'], packet['Y'], packet['Z'], packet['Yaw'], packet['Pitch']
-
-			self.broadcast(packets.EntityTeleport({
-				'EID': self.id,
-				'X': packet['X'] * 32,
-				'Y': packet['Y'] * 32,
-				'Z': packet['Z'] * 32,
-				'Yaw': degree_to_byte(packet['Yaw']),
-				'Pitch': degree_to_byte(-packet['Pitch'])
-			}))
-		'''
 
 		if packet.id == 0x0A:
 			return
@@ -334,21 +290,9 @@ class ProxyPlayer():
 		self.protocol.packet_handlers[0xCD] = self.on_clientstatus
 
 	def send_chunks(self):
-		for x in xrange(-1, 2):
-			for z in xrange(-1, 2):
-				blocks = numpy.zeros((256, 16, 16), numpy.uint8)
-				block_metadata = numpy.zeros((128, 16, 16), numpy.uint8)
-				block_light = numpy.zeros((128, 16, 16), numpy.uint8)
-				skylights = numpy.zeros((128, 16, 16), numpy.uint8)
-
-				if x == 0 and z == 0:
-					blocks[63,:,:] = 0x02
-
-				blocks = blocks.reshape((16, 16, 256))
-				block_light[:] = 0xFF
-				skylights[:] = 0xFF
-
-				compressed = zlib.compress(blocks.tostring() + block_metadata.tostring() + block_light.tostring() + skylights.tostring())
+		for x in xrange(self.protocol.factory.world.width):
+			for z in xrange(self.protocol.factory.world.length):
+				data = self.protocol.factory.world.chunks[x][z].get_data()
 
 				self.protocol.write_packet(packets.ChunkData({
 					'X': x,
@@ -356,6 +300,6 @@ class ProxyPlayer():
 					'GroundUp': True,
 					'PrimaryBitMap': 0xFFFF,
 					'AddBitMap': 0x0000,
-					'CompressedSize': len(compressed),
-					'CompressedData': compressed
+					'CompressedSize': len(data),
+					'CompressedData': data
 				}))
