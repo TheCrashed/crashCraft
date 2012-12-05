@@ -16,6 +16,9 @@ class Player():
 		self.yaw = 0
 		self.pitch = 0
 
+	def get_world(self):
+		return self.protocol.factory.world
+
 	def broadcast(self, packet, all=False):
 		exclude = []
 		if not all:
@@ -161,9 +164,9 @@ class Player():
 		self.protocol.packet_handlers[0xCD] = self.on_clientstatus
 
 	def send_chunks(self):
-		for x in xrange(self.protocol.factory.world.width):
-			for z in xrange(self.protocol.factory.world.length):
-				data = self.protocol.factory.world.chunks[x][z].get_data()
+		for x in xrange(self.get_world().width):
+			for z in xrange(self.get_world().length):
+				data = self.get_world().chunks[x][z].get_data()
 
 				self.protocol.write_packet(packets.ChunkData({
 					'X': x,
