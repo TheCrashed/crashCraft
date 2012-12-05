@@ -3,6 +3,7 @@ import server.factory
 
 import world
 
+
 def run():
 	factory = server.factory.MinecraftFactory()
 	factory.world = world.MinecraftWorld(2, 2)
