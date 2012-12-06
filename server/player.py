@@ -183,17 +183,17 @@ class Player():
 
 	def send_chunks(self):
 		for chunk in self.get_world().iter_chunks():
-				data = chunk.get_data()
+			data = chunk.get_data()
 
-				self.protocol.write_packet(packets.ChunkData({
-					'X': chunk.x,
-					'Z': chunk.z,
-					'GroundUp': True,
-					'PrimaryBitMap': 0xFFFF,
-					'AddBitMap': 0x0000,
-					'CompressedSize': len(data),
-					'CompressedData': data
-				}))
+			self.protocol.write_packet(packets.ChunkData({
+				'X': chunk.x,
+				'Z': chunk.z,
+				'GroundUp': True,
+				'PrimaryBitMap': 0xFFFF,
+				'AddBitMap': 0x0000,
+				'CompressedSize': len(data),
+				'CompressedData': data
+			}))
 
 	def send_chunk(self, x, z):
 		data = self.get_world().get_chunk(0, 0).get_data()
