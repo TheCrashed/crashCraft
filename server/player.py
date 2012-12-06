@@ -117,6 +117,7 @@ class Player():
 			self.get_world().root.start_skyisfalling()
 
 	def on_dig(self, packet):
+		'''
 		self.protocol.write_packet(packets.BlockChange({
 			'X': packet['X'],
 			'Y': packet['Y'],
@@ -124,6 +125,9 @@ class Player():
 			'Type': 0x02,
 			'Metadata': 0
 		}))
+		'''
+
+		self.send_chunk(packet['X'] / 32, packet['Z'] / 32)
 
 	def on_player(self, packet):
 		def degree_to_byte(degree, fix=0):
@@ -178,13 +182,12 @@ class Player():
 		self.protocol.packet_handlers[0xCD] = self.on_clientstatus
 
 	def send_chunks(self):
-		for x in xrange(self.get_world().width):
-			for z in xrange(self.get_world().length):
-				data = self.get_world().chunks[x][z].get_data()
+		for chunk in self.get_world().iter_chunks():
+				data = chunk.get_data()
 
 				self.protocol.write_packet(packets.ChunkData({
-					'X': x,
-					'Z': z,
+					'X': chunk.x,
+					'Z': chunk.z,
 					'GroundUp': True,
 					'PrimaryBitMap': 0xFFFF,
 					'AddBitMap': 0x0000,
@@ -193,7 +196,7 @@ class Player():
 				}))
 
 	def send_chunk(self, x, z):
-		data = self.get_world().chunks[x][z].get_data()
+		data = self.get_world().get_chunk(0, 0).get_data()
 
 		self.protocol.write_packet(packets.ChunkData({
 			'X': x,

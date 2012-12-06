@@ -60,6 +60,15 @@ class Packet(object):
 		if Packet.handlers == None:
 			Packet.refresh_packet_handlers()
 
+		pos = stream.tell()
+
+		try:
+			stream.read(1)
+		except:
+			raise EOFError
+
+		stream.seek(pos)
+
 		try:
 			id = javatypes.UBYTE(stream)
 		except:

@@ -16,7 +16,7 @@ class crashCraft():
 
 		self.factory.world = self.world
 
-		chunk = self.world.chunks[0][0]
+		chunk = self.world.get_chunk(0, 0)
 		chunk.blocks[63,:,:] = 0x02
 		chunk.build_data()
 
@@ -38,7 +38,7 @@ class crashCraft():
 			self.generate_block()
 
 		for block in self.blocks:
-			self.world.chunks[0][0].blocks[block[1], block[0], block[2]] = 0x01
+			self.world.get_chunk(0, 0).blocks[block[1], block[0], block[2]] = 0x01
 
 		server.reactor.callLater(0.5, self.tick_skyisfalling)
 
@@ -47,11 +47,11 @@ class crashCraft():
 			self.generate_block()
 
 		for block in self.blocks:
-			if self.world.chunks[0][0].blocks[block[1] - 1, block[0], block[2]] == 0x00:
-				self.world.chunks[0][0].blocks[block[1], block[0], block[2]] = 0x00
+			if self.world.get_chunk(0, 0).blocks[block[1] - 1, block[0], block[2]] == 0x00:
+				self.world.get_chunk(0, 0).blocks[block[1], block[0], block[2]] = 0x00
 				block[1] -= 1
-				self.world.chunks[0][0].blocks[block[1], block[0], block[2]] = 0x01
-				self.world.chunks[0][0].dirty = True
+				self.world.get_chunk(0, 0).blocks[block[1], block[0], block[2]] = 0x01
+				self.world.get_chunk(0, 0).dirty = True
 
 				for client in self.factory.registered_clients:
 					client.player.send_chunk(0, 0)
@@ -67,9 +67,9 @@ class crashCraft():
 
 		if len(self.players) == 0:
 			self.factory.broadcast_packet(packets.ChatMessage({'Message': '<Server> NO WINNER!'}))
-		elif len(self.players) == 1:
-			self.factory.broadcast_packet(packets.ChatMessage({'Message': '<Server> %s IS THE WINNER!' % self.players[0].player.username}))
-			self.blocks = []
+		#elif len(self.players) == 1:
+		#	self.factory.broadcast_packet(packets.ChatMessage({'Message': '<Server> %s IS THE WINNER!' % self.players[0].player.username}))
+		#	self.blocks = []
 
 		if len(self.blocks):
 			server.reactor.callLater(0.5, self.tick_skyisfalling)

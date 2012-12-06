@@ -66,13 +66,17 @@ class MinecraftProtocol(Protocol):
 
 		except PartialPacketException:
 			self.partial_packets += 1
-			#print '\t\t%s PARTIAL PACKET' % self.transport.getPeer()
+			print '\t\t%s PARTIAL PACKET' % self.transport.getPeer()
 			if self.partial_packets >= self.partial_threshold:
-				#print '\t\t%s PARTIAL PACKET THRESHOLD' % self.transport.getPeer()
+				print '\t\t%s PARTIAL PACKET THRESHOLD' % self.transport.getPeer()
 				self.clear()
 
 		except (CorruptPacketException, UnknownPacketException), error:
-			#print '\t\t%s CORRUPTED STREAM' % self.transport.getPeer()
+			print '\t\t%s CORRUPTED STREAM' % self.transport.getPeer()
+			#print ' '.join('0x%02X' % ord(x) for x in self.read_buffer.getvalue())
+			self.clear()
+
+		except EOFError:
 			self.clear()
 
 		for packet in packets:

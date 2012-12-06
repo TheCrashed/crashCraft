@@ -9,6 +9,14 @@ class MinecraftWorld():
 
 		self.chunks = [[Chunk(x, z) for z in xrange(-chunk_length, chunk_length + 1)] for x in xrange(-chunk_width, chunk_width + 1)]
 
+	def get_chunk(self, x, z):
+		return self.chunks[((self.width - 1) / 2) + x][((self.length - 1) / 2) + z]
+
+	def iter_chunks(self):
+		for x in xrange(self.width):
+			for z in xrange(self.length):
+				yield self.chunks[x][z]
+
 
 class Chunk():
 	def __init__(self, x, z):
@@ -26,6 +34,9 @@ class Chunk():
 		self.skylights[:] = 0xFF
 
 		self.build_data()
+
+	def __repr__(self):
+		return '<Chunk at %i,%i>' % (self.x, self.z)
 
 	def get_data(self):
 		if self.dirty:
