@@ -202,6 +202,16 @@ class ChunkData(Packet):
 		('CompressedData', BYTEARRAY)
 	])
 
+class MultiBlockChange(Packet):
+	id = 0x34
+	members = OrderedDict([
+		('X', INT),
+		('Z', INT),
+		('Count', SHORT),
+		('Size', INT),
+		('Data', BYTEARRAY)
+	])
+
 class BlockChange(Packet):
 	id = 0x35
 	members = OrderedDict([
@@ -210,6 +220,28 @@ class BlockChange(Packet):
 		('Z', INT),
 		('Type', SHORT),
 		('Metadata', BYTE)
+	])
+
+class BlockAction(Packet):
+	id = 0x36
+	members = OrderedDict([
+		('X', INT),
+		('Y', SHORT),
+		('Z', INT),
+		('Byte1', BYTE),
+		('Byte2', BYTE),
+		('BlockID', SHORT)
+	])
+
+class NamedSoundEffect(Packet):
+	id = 0x3E
+	members = OrderedDict([
+		('Name', UNICODE),
+		('X', INT),
+		('Y', INT),
+		('Z', INT),
+		('Volume', FLOAT),
+		('Pitch', BYTE)
 	])
 
 class PlayerListItem(Packet):

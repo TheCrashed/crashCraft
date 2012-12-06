@@ -10,9 +10,9 @@ class Player():
 		self.id = javatypes.struct.unpack('H', os.urandom(2))[0]
 		self.protocol = protocol
 
-		self.x = 0
-		self.y = 0
-		self.z = 0
+		self.x = 8
+		self.y = 68
+		self.z = 8
 		self.yaw = 0
 		self.pitch = 0
 
@@ -89,6 +89,15 @@ class Player():
 				'Message': '<Server> %s has joined.' % self.username
 			}), all=True)
 
+			reactor.callLater(0.1, self.broadcast, packets.NamedSoundEffect({
+				'Name': 'note.harp',
+				'X': self.x,
+				'Y': self.y,
+				'Z': self.z,
+				'Volume': 10,
+				'Pitch': 127,
+			}), all=True)
+
 			self.protocol.packet_handlers[0x03] = self.on_chat
 			self.protocol.packet_handlers[0x0A] = self.on_player
 			self.protocol.packet_handlers[0x0B] = self.on_player
@@ -99,8 +108,13 @@ class Player():
 			reactor.callLater(0, self.ping)
 
 	def on_chat(self, packet):
+		message = packet['Message']
+
 		packet['Message'] = '<%s> %s' % (self.username, packet['Message'][:100])
 		self.broadcast(packet, all=True)
+
+		if message == 'start':
+			self.get_world().root.start_skyisfalling()
 
 	def on_dig(self, packet):
 		self.protocol.write_packet(packets.BlockChange({
@@ -177,3 +191,16 @@ class Player():
 					'CompressedSize': len(data),
 					'CompressedData': data
 				}))
+
+	def send_chunk(self, x, z):
+		data = self.get_world().chunks[x][z].get_data()
+
+		self.protocol.write_packet(packets.ChunkData({
+			'X': x,
+			'Z': z,
+			'GroundUp': True,
+			'PrimaryBitMap': 0xFFFF,
+			'AddBitMap': 0x0000,
+			'CompressedSize': len(data),
+			'CompressedData': data
+		}))
