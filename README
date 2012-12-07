@@ -1,0 +1,32 @@
+crashCraft
+==========
+
+Minimalistic Minecraft 1.4.5 server written in Python
+
+
+Example
+==========
+
+import crashCraft
+import crashCraft.world
+import crashCraft.server
+
+
+class MinecraftMG(crashCraft.application.Application):
+  def Init(self):
+		print 'Initializing MinecraftMG...'
+
+		self.world = crashCraft.world.World()
+		self.server = crashCraft.server.Server(port=25565)
+
+		self.PopulateWorld()
+
+		print 'Done!'
+
+	def PopulateWorld(self):
+		self.world.Create((-10, 11), (-10, 11))
+		self.world.GetChunk(0, 0).Blocks[16,:,:] = crashCraft.world.Blocks.Stone.id
+
+
+if __name__ == '__main__':
+	MinecraftMG().Run()
