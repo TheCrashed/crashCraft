@@ -6,7 +6,7 @@ Minimalistic Minecraft 1.4.5 server written in Python
 
 Example
 ==========
-
+<pre>
 import crashCraft
 import crashCraft.world
 import crashCraft.server
@@ -30,3 +30,4 @@ class MinecraftMG(crashCraft.application.Application):
 
 if __name__ == '__main__':
 	MinecraftMG().Run()
+</pre>
