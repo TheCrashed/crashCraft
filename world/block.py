@@ -50,3 +50,5 @@ class Blocks():
 	PistonExtension = Block(0x0022, 'Piston Extension')
 	Wool = Block(0x0023, 'Wool')
 	PistonBlockMoved = Block(0x0024, 'Piston Block Moved')
+
+	MossStone = Block(0x0030, 'Mossy Cobblestone')

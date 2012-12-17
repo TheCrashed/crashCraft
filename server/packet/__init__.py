@@ -9,4 +9,5 @@ class CorruptPacketException(Exception):
 
 
 from .packet import Packet
+from . import packets
 from . import types

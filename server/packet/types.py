@@ -18,15 +18,18 @@ class CustomType():
 
 
 class Slot(CustomType):
-	@staticmethod
+	def __init__(self, data):
+		self.data = data
+
 	def frombuffer(self, buffer):
-		id = javatypes.Short.frombuffer(buffer)
+		id = Short.frombuffer(buffer)
+
 		if id == -1:
 			return None
 
-		count = javatypes.Byte.frombuffer(buffer)
-		damage = javatypes.Short.frombuffer(buffer)
-		data_length = javatypes.Short.frombuffer(buffer)
+		count = Byte.frombuffer(buffer)
+		damage = Short.frombuffer(buffer)
+		data_length = Short.frombuffer(buffer)
 
 		return OrderedDict(
 			ID = id,
@@ -34,3 +37,18 @@ class Slot(CustomType):
 			Damage = damage,
 			Data = None
 		)
+
+	def tostring(self):
+		data = self.data
+
+		if data == -1:
+			return Byte.tostring(-1)
+
+		ID, Count, Damage = data
+
+		return ''.join((
+			Short.tostring(ID),
+			Byte.tostring(Count),
+			Short.tostring(Damage),
+			Short.tostring(-1)
+		))

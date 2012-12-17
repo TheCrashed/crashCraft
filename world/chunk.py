@@ -1,4 +1,7 @@
-import numpy
+try:
+	import numpy
+except ImportError:
+	import numpypy as numpy
 
 from . import CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_LENGTH
 
@@ -17,3 +20,6 @@ class Chunk():
 		self.Block_Light = numpy.zeros((CHUNK_HEIGHT, CHUNK_LENGTH, CHUNK_WIDTH), numpy.ubyte)
 		self.Skylight = numpy.zeros((CHUNK_HEIGHT, CHUNK_LENGTH, CHUNK_WIDTH), numpy.ubyte)
 		self.Biomes = numpy.zeros((CHUNK_LENGTH, CHUNK_WIDTH), numpy.ubyte)
+
+		self.Block_Light[:] = 0xFF
+		self.Skylight[:] = 0xFF

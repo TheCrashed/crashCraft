@@ -70,11 +70,10 @@ class String_Type(ByteArray_Type):
 		return value[:self.size]
 
 	def tobuffer(self, value, buffer):
-		value = self.tostring(value)
-		buffer.write(Short.tostring(len(value)) + value)
+		buffer.write(self.tostring(value))
 
 	def tostring(self, value):
-		return value
+		return Short.tostring(len(value)) + value
 
 class Unicode_Type(String_Type):
 	encoding = 'UTF-16-BE'
@@ -90,11 +89,10 @@ class Unicode_Type(String_Type):
 		return unicode(value[:self.size], encoding=self.encoding)
 
 	def tobuffer(self, value, buffer):
-		value = self.tostring(value)
-		buffer.write(Short.tostring(len(value)) + value)
+		buffer.write(self.tostring(value))
 
 	def tostring(self, value):
-		return value.encode(self.encoding)
+		return Short.tostring(len(value)) + value.encode(self.encoding)
 
 
 Byte = JavaType(
